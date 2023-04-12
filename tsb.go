@@ -212,8 +212,8 @@ func GetData(r io.Reader) (chan TsbData, chan struct{}) {
 	go func() {
 		var i, k int
 		wbuf := []byte{}
+		rbuf := make([]byte, 10000)
 		for {
-			rbuf := make([]byte, 10000)
 			n, err := r.Read(rbuf)
 			if err != nil {
 				/*
