@@ -46,8 +46,8 @@ func NewSerialServer(adr string) (Server, error) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	s.tdPutCh = PutData(s.sport)
-	s.tdGetCh, s.done = GetData(s.sport)
+	s.tdPutCh = PutData(s.sport, 200)
+	s.tdGetCh, s.done = GetData(s.sport, 200)
 	s.serv()
 	return s, nil
 }
@@ -60,8 +60,8 @@ func NewTcpServer(adr string) (Server, error) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	s.tdPutCh = PutData(s.conn)
-	s.tdGetCh, s.done = GetData(s.conn)
+	s.tdPutCh = PutData(s.conn, 200)
+	s.tdGetCh, s.done = GetData(s.conn, 200)
 	s.serv()
 	return s, nil
 }
