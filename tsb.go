@@ -243,7 +243,13 @@ func GetData(r io.Reader, chanLen int) (chan TsbData, chan struct{}) {
 								fmt.Printf("\tDecode packet:\t\t%x\n", packet)
 							}
 						} else {
-							c <- td
+							if len(c) < chanLen {
+								c <- td
+							} else {
+								if ErrorVerbose {
+									log.Print("tsb channel full")
+								}
+							}
 						}
 					}
 					wbuf = []byte{}
