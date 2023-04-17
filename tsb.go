@@ -206,7 +206,7 @@ func CobsDecode(b []byte) ([]byte, error) {
 
 // GetData reads tsb data from io.Reader and puts it in a channel
 func GetData(r io.Reader) (chan TsbData, chan struct{}) {
-	c := make(chan TsbData, 100)
+	c := make(chan TsbData, 200)
 	done := make(chan struct{})
 
 	go func() {
@@ -258,7 +258,7 @@ func GetData(r io.Reader) (chan TsbData, chan struct{}) {
 
 // PutData reads tsb data from a channel and writes it to the io.Writer
 func PutData(w io.Writer) chan TsbData {
-	c := make(chan TsbData, 10)
+	c := make(chan TsbData, 200)
 	go func() {
 		for {
 			td := <-c
