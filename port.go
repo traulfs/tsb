@@ -69,21 +69,35 @@ func (p *Port) Read(b []byte) (n int, err error) {
 func PortCharNibble(code byte, value int) []byte {
 	switch code {
 	case PortcharReadWrite:
+		fallthrough
 	case PortcharRead:
+		fallthrough
 	case PortcharSetOutput:
+		fallthrough
 	case PortcharClearOutput:
+		fallthrough
 	case PortcharToggleOutput:
+		fallthrough
 	case PortcharNotification:
+		fallthrough
 	case PortcharDelay:
 		return []byte{code<<4 | (byte(value) & 0x0f)}
 	case PortcharSetDirection:
+		fallthrough
 	case PortcharClearDirection:
+		fallthrough
 	case PortcharSetPullEnable:
+		fallthrough
 	case PortcharClearPullEnable:
+		fallthrough
 	case PortcharSetNotification:
+		fallthrough
 	case PortcharClearNotification:
+		fallthrough
 	case PortcharSetLED:
+		fallthrough
 	case PortcharClearLED:
+		fallthrough
 	case PortcharToggleLED:
 		return []byte{0xf0 | (code & 0x07), (0x80 | ((code << 1) & 0xf0)), 0x80, 0x80 | (byte(value) & 0x0f)}
 	}

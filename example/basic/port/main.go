@@ -28,7 +28,7 @@ func main() {
 		fmt.Printf("Toggle Red LED:   %x\n", tsb.PortCharNibble(tsb.PortcharToggleLED, LED_Red))
 		time.Sleep(1000 * time.Millisecond)
 		port.Write(tsb.PortCharNibble(tsb.PortcharToggleLED, LED_Green))
-		fmt.Printf("Toggle Red Green: %x\n", tsb.PortCharNibble(tsb.PortcharToggleLED, LED_Green))
+		fmt.Printf("Toggle Green LDE: %x\n", tsb.PortCharNibble(tsb.PortcharToggleLED, LED_Green))
 		time.Sleep(1000 * time.Millisecond)
 	}
 }
