@@ -9,48 +9,83 @@ const (
 )
 
 const (
-	PortcharReadWrite byte = iota << 4
-	PortcharSetOutput
-	PortcharClearOutput
-	PortcharToggleOutput
-	PortcharSetDirection
-	PortcharClearDirection
-	PortcharSetPullEnable
-	PortcharClearPullEnable
-	PortcharSetNotification
-	PortcharClearNotification
-	PortcharNotification
-	PortcharFree1
-	PortcharFree2
-	PortcharFree3
-	PortcharRead
-	PortcharError
+	PortcharReadWrite         = 0x00
+	PortcharRead              = 0x01
+	PortcharSetOutput         = 0x02
+	PortcharClearOutput       = 0x03
+	PortcharToggleOutput      = 0x04
+	PortcharNotification      = 0x05
+	PortcharDelay             = 0x06
+	PortcharSetDirection      = 0x08
+	PortcharClearDirection    = 0x09
+	PortcharSetPullEnable     = 0x0A
+	PortcharClearPullEnable   = 0x0B
+	PortcharSetNotification   = 0x0C
+	PortcharClearNotification = 0x0D
+	PortcharSetLED            = 0x10
+	PortcharClearLED          = 0x11
+	PortcharToggleLED         = 0x12
 )
 
-func (s *Server) PortInit(jack byte) (err error) {
+// I2C represents a connection to I2C-device.
+type Port struct {
+	Jack   byte
+	Server Server
+}
+
+// NewI2C opens a connection for I2C-device.
+func NewPort(jack byte, server Server) (*Port, error) {
 	CheckJack(jack)
-	//s.jack[jack].ReadChan[TypPort] = make(chan byte, 1024)
-	return nil
-}
-
-func (s *Server) PortGetc(jack byte) (c byte) {
-	c = <-s.Jack[jack].ReadChan[TypPort]
-	return c
-}
-
-func (s *Server) PortPutc(jack byte, c byte) (err error) {
-	td := TsbData{Ch: []byte{byte(jack)}, Typ: []byte{TypPort}, Payload: []byte{c}}
-	s.tdPutCh <- td
+	port := &Port{Server: server, Jack: jack}
 	/*
-		fmt.Printf("td.Ch: %d, Typ: %d, Payload: %x\n", td.Ch[0], td.Typ[0], td.Payload)
-		encoded := Encode(td)
-		fmt.Printf("encode: %x\n", encoded)
-		cobs := CobsEncode(encoded)
-		fmt.Printf("cobs: %x\n", cobs)
-		packet := CobsDecode(cobs)
-		fmt.Printf("packet: %x\n", packet)
-		td2, _ := Decode(packet)
-		fmt.Printf("td2.Ch: %d, Typ: %d, Payload: %x\n", td2.Ch[0], td2.Typ[0], td2.Payload)
+		err := ModbusWriteSingleRegister(ModeRegisterAdr, jack, server, RegModeValuePort)
+		if err != nil {
+			return nil, err
+		}
 	*/
+	return port, nil
+}
+
+// Write writes a buffer
+func (p *Port) Write(b []byte) (n int, err error) {
+	td := TsbData{Ch: []byte{byte(p.Jack)}, Typ: []byte{TypPort}, Payload: b}
+	p.Server.tdPutCh <- td
+	return len(b), nil
+}
+
+// Read reads a buffer
+func (p *Port) Read(b []byte) (n int, err error) {
+	b[0] = <-p.Server.Jack[p.Jack].ReadChan[TypPort]
+	n = len(p.Server.Jack[p.Jack].ReadChan[TypPort]) + 1
+	if n > len(b) {
+		n = len(b)
+	}
+	for i := 1; i < n; i++ {
+		b[i] = <-p.Server.Jack[p.Jack].ReadChan[TypPort]
+	}
+	return n, nil
+}
+
+func PortCharNibble(code byte, value int) []byte {
+	switch code {
+	case PortcharReadWrite:
+	case PortcharRead:
+	case PortcharSetOutput:
+	case PortcharClearOutput:
+	case PortcharToggleOutput:
+	case PortcharNotification:
+	case PortcharDelay:
+		return []byte{code<<4 | (byte(value) & 0x0f)}
+	case PortcharSetDirection:
+	case PortcharClearDirection:
+	case PortcharSetPullEnable:
+	case PortcharClearPullEnable:
+	case PortcharSetNotification:
+	case PortcharClearNotification:
+	case PortcharSetLED:
+	case PortcharClearLED:
+	case PortcharToggleLED:
+		return []byte{0xf0 | (code & 0x07), (0x80 | ((code << 1) & 0xf0)), 0x80, 0x80 | (byte(value) & 0x0f)}
+	}
 	return nil
 }
