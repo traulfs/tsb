@@ -258,6 +258,8 @@ func GetData(r io.Reader, chanLen int) (chan TsbData, chan struct{}) {
 			wbuf = append(wbuf, rbuf[k:n]...)
 		}
 		done <- struct{}{}
+		close(done)
+		close(c)
 	}()
 	return c, done
 }
@@ -266,8 +268,7 @@ func GetData(r io.Reader, chanLen int) (chan TsbData, chan struct{}) {
 func PutData(w io.Writer, chanLen int) chan TsbData {
 	c := make(chan TsbData, chanLen)
 	go func() {
-		for {
-			td := <-c
+		for td := range c {
 			out := CobsEncode(Encode(td))
 			_, err := w.Write(out)
 			if Verbose {
@@ -276,7 +277,6 @@ func PutData(w io.Writer, chanLen int) chan TsbData {
 			if err != nil {
 				log.Fatal(err)
 			}
-
 		}
 	}()
 	return c
