@@ -55,12 +55,11 @@ func (p *Port) Write(b []byte) (n int, err error) {
 
 // Read reads a buffer
 func (p *Port) Read(b []byte) (n int, err error) {
-	b[0] = <-p.Server.Jack[p.Jack].ReadChan[TypPort]
-	n = len(p.Server.Jack[p.Jack].ReadChan[TypPort]) + 1
+	n = len(p.Server.Jack[p.Jack].ReadChan[TypPort])
 	if n > len(b) {
 		n = len(b)
 	}
-	for i := 1; i < n; i++ {
+	for i := 0; i < n; i++ {
 		b[i] = <-p.Server.Jack[p.Jack].ReadChan[TypPort]
 	}
 	return n, nil
