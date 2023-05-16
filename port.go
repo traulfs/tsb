@@ -98,7 +98,7 @@ func PortCharNibble(code byte, value int) []byte {
 	case PortcharClearLED:
 		fallthrough
 	case PortcharToggleLED:
-		return []byte{0xf0 | (code & 0x07), (0x80 | ((code << 1) & 0xf0)), 0x80, 0x80 | (byte(value) & 0x0f)}
+		return []byte{0xe0 | ((code >> 2) & 0x0f), 0x80 | ((code & 0x03) << 4), 0x80, 0x80 | (byte(value) & 0x0f)}
 	}
 	return nil
 }
