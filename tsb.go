@@ -247,7 +247,11 @@ func GetData(r io.Reader, chanLen int) (chan TsbData, chan struct{}) {
 								c <- td
 							} else {
 								if ErrorVerbose {
-									log.Print("tsb channel full")
+									log.Printf("tsb channel full:\t%x\n", r)
+									for len(c) > 1 {
+										<-c
+									}
+
 								}
 							}
 						}
