@@ -99,7 +99,7 @@ func (s *Server) serv() {
 					}
 					for i := range td.Payload {
 						s.Jack[td.Ch[0]].ReadChan[td.Typ[0]] <- td.Payload[i]
-						//	fmt.Printf("%x\n", td.Payload[i])
+						fmt.Printf("%x\n", td.Payload[i])
 					}
 				}
 			case <-s.done:
