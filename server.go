@@ -28,15 +28,15 @@ type jack struct {
 }
 
 type Server struct {
-	Adr     string
-	Typ     string
-	Handler [MaxJacks + 1]map[int]func(ch byte, typ byte, paylooad []byte)
-	Jack    [MaxJacks + 1]jack
-	conn    net.Conn
-	sport   *serial.Port
-	tdPutCh chan TsbData
-	tdGetCh chan TsbData
-	done    chan struct{}
+	Adr      string
+	Typ      string
+	callback [MaxJacks + 1]map[int]func(ch byte, typ byte, paylooad []byte)
+	Jack     [MaxJacks + 1]jack
+	conn     net.Conn
+	sport    *serial.Port
+	tdPutCh  chan TsbData
+	tdGetCh  chan TsbData
+	done     chan struct{}
 }
 
 func NewSerialServer(adr string) (Server, error) {
@@ -72,12 +72,12 @@ func (s *Server) Close() {
 	close(s.done)
 }
 
-func (s *Server) SetHandler(jack byte, typ int, f func(ch byte, typ byte, payload []byte)) {
+func (s *Server) SetCallback(jack byte, typ int, f func(ch byte, typ byte, payload []byte)) {
 	CheckJack(jack)
-	if s.Handler[jack] == nil {
-		s.Handler[jack] = make(map[int]func(ch byte, typ byte, payload []byte))
+	if s.callback[jack] == nil {
+		s.callback[jack] = make(map[int]func(ch byte, typ byte, payload []byte))
 	}
-	s.Handler[jack][typ] = f
+	s.callback[jack][typ] = f
 }
 
 func (s *Server) serv() {
