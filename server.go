@@ -67,6 +67,19 @@ func NewTcpServer(adr string) (Server, error) {
 	return s, nil
 }
 
+func (s *Server) Close() {
+	close(s.tdPutCh)
+	close(s.done)
+}
+
+func (s *Server) SetHandler(jack byte, typ int, f func(ch byte, typ byte, payload []byte)) {
+	CheckJack(jack)
+	if s.Handler[jack] == nil {
+		s.Handler[jack] = make(map[int]func(ch byte, typ byte, payload []byte))
+	}
+	s.Handler[jack][typ] = f
+}
+
 func (s *Server) serv() {
 	for i := 0; i <= int(MaxJacks); i++ {
 		s.Jack[i].ReadChan[TypI2c] = make(chan byte, 1024)
