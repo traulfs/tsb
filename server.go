@@ -30,6 +30,7 @@ type jack struct {
 type Server struct {
 	Adr     string
 	Typ     string
+	Handler [MaxJacks + 1]map[int]func(ch byte, typ byte, paylooad []byte)
 	Jack    [MaxJacks + 1]jack
 	conn    net.Conn
 	sport   *serial.Port
@@ -96,6 +97,9 @@ func (s *Server) serv() {
 					if len(s.Jack[td.Ch[0]].ReadChan[td.Typ[0]]) > 800 {
 						log.Printf("Read Channel Overflow! Jack: %d, Typ: %d, cap: %d, len: %d", td.Ch[0], td.Typ[0],
 							cap(s.Jack[td.Ch[0]].ReadChan[td.Typ[0]]), len(s.Jack[td.Ch[0]].ReadChan[td.Typ[0]]))
+					}
+					if s.Handler[td.Ch[0]][int(td.Typ[0])] != nil {
+						s.Handler[td.Ch[0]][int(td.Typ[0])](td.Ch[0], td.Typ[0], td.Payload)
 					}
 					for i := range td.Payload {
 						s.Jack[td.Ch[0]].ReadChan[td.Typ[0]] <- td.Payload[i]

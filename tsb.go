@@ -57,7 +57,7 @@ const (
 // TypLabel maps a string to each type
 var TypLabel = map[byte]string{
 	TypUnused:     "unused",
-	TypRaw:        "raw",
+	TypRaw:        "raw", // raw data for UART, SPI, ...
 	TypText:       "text",
 	TypPort:       "port",
 	TypI2c:        "i2c",
