@@ -82,7 +82,7 @@ func (s Server) SetCallback(jack byte, typ byte, f func(payload []byte)) {
 	fmt.Printf("Callback set for Jack: %d, Typ: %d\n", jack, typ)
 }
 
-func (s *Server) serv() {
+func (s Server) serv() {
 	for i := 0; i <= int(MaxJacks); i++ {
 		s.Jack[i].ReadChan[TypI2c] = make(chan byte, 1024)
 		s.Jack[i].ReadChan[TypPort] = make(chan byte, 1024)
@@ -91,7 +91,7 @@ func (s *Server) serv() {
 		s.Jack[i].ReadChan[TypModbus] = make(chan byte, 1024)
 	}
 	fmt.Printf("TSB client connected to tsb server: %s\n", s.Adr)
-	go func(s *Server) {
+	go func(s Server) {
 		for {
 			select {
 			case td := <-s.tdGetCh:
