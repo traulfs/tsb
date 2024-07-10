@@ -115,6 +115,8 @@ func (s *Server) serv() {
 					if s.callback[td.Ch[0]][td.Typ[0]] != nil {
 						fmt.Printf("Callback called for Jack: %d, Typ: %d\n", td.Ch[0], td.Typ[0])
 						s.callback[td.Ch[0]][td.Typ[0]](td.Payload)
+					} else {
+						fmt.Printf("No callback for Jack: %d, Typ: %d\n", td.Ch[0], td.Typ[0])
 					}
 					for i := range td.Payload {
 						s.Jack[td.Ch[0]].ReadChan[td.Typ[0]] <- td.Payload[i]
