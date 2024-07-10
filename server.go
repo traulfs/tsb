@@ -72,7 +72,15 @@ func (s *Server) Close() {
 	close(s.done)
 }
 
-func (s *Server) SetCallback(jack byte, typ byte, f func(payload []byte)) {
+func (s Server) SetCallback(jack byte, typ byte, f func(payload []byte)) {
+	CheckJack(jack)
+	if s.callback[jack] == nil {
+		s.callback[jack] = make(map[byte]func(data []byte))
+	}
+	s.callback[jack][typ] = f
+}
+
+func (s *Server) SetMyCallback(jack byte, typ byte, f func(payload []byte)) {
 	CheckJack(jack)
 	if s.callback[jack] == nil {
 		s.callback[jack] = make(map[byte]func(data []byte))
