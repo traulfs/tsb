@@ -78,6 +78,7 @@ func (s Server) SetCallback(jack byte, typ byte, f func(payload []byte)) {
 		s.callback[jack] = make(map[byte]func(data []byte))
 	}
 	s.callback[jack][typ] = f
+	fmt.Printf("Callback set for Jack: %d, Typ: %d\n", jack, typ)
 }
 
 func (s *Server) serv() {
@@ -116,7 +117,7 @@ func (s *Server) serv() {
 					}
 					for i := range td.Payload {
 						s.Jack[td.Ch[0]].ReadChan[td.Typ[0]] <- td.Payload[i]
-						//fmt.Printf("Ch: %d, Typ: %d, Data: %02x\n", td.Ch[0], td.Typ[0], td.Payload[i])
+						fmt.Printf("Ch: %d, Typ: %d, Data: %02x\n", td.Ch[0], td.Typ[0], td.Payload[i])
 					}
 				}
 			case <-s.done:
