@@ -67,20 +67,12 @@ func NewTcpServer(adr string) (Server, error) {
 	return s, nil
 }
 
-func (s *Server) Close() {
+func (s Server) Close() {
 	close(s.tdPutCh)
 	close(s.done)
 }
 
 func (s Server) SetCallback(jack byte, typ byte, f func(payload []byte)) {
-	CheckJack(jack)
-	if s.callback[jack] == nil {
-		s.callback[jack] = make(map[byte]func(data []byte))
-	}
-	s.callback[jack][typ] = f
-}
-
-func (s *Server) SetMyCallback(jack byte, typ byte, f func(payload []byte)) {
 	CheckJack(jack)
 	if s.callback[jack] == nil {
 		s.callback[jack] = make(map[byte]func(data []byte))
@@ -137,7 +129,7 @@ func (s *Server) serv() {
 	}(s)
 }
 
-func (s *Server) SpiInit(jack byte) (err error) {
+func (s Server) SpiInit(jack byte) (err error) {
 	CheckJack(jack)
 	return nil
 }
