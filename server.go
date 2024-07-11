@@ -91,7 +91,7 @@ func (s Server) serv() {
 		s.Jack[i].ReadChan[TypModbus] = make(chan byte, 1024)
 	}
 	fmt.Printf("TSB client connected to tsb server: %s\n", s.Adr)
-	go func(s Server) {
+	go func() {
 		for {
 			select {
 			case td := <-s.tdGetCh:
@@ -131,7 +131,7 @@ func (s Server) serv() {
 				}
 			}
 		}
-	}(s)
+	}()
 }
 
 func (s Server) SpiInit(jack byte) (err error) {
