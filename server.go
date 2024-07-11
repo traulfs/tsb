@@ -78,7 +78,7 @@ func (s Server) SetCallback(jack byte, typ byte, f func(payload []byte)) {
 		s.callback[jack] = make(map[byte]func(data []byte))
 	}
 	s.callback[jack][typ] = f
-	s.callback[jack][typ]([]byte{0x65, 0x65, 0x65, 0x65, 0x65, 0x65})
+	//s.callback[jack][typ]([]byte{0x65, 0x65, 0x65, 0x65, 0x65, 0x65})
 	fmt.Printf("Callback set for Jack: %d, Typ: %d\n", jack, typ)
 }
 
