@@ -134,7 +134,7 @@ func (s *Server) serv() {
 	}(s)
 }
 
-func (s Server) SpiInit(jack byte) (err error) {
+func (s *Server) SpiInit(jack byte) (err error) {
 	CheckJack(jack)
 	return nil
 }
