@@ -33,7 +33,7 @@ const (
 )
 
 // ModbusWriteSingleRegister macht was?
-func ModbusWriteSingleRegister(adr uint16, jack byte, server Server, value uint16) error {
+func ModbusWriteSingleRegister(adr uint16, jack byte, server *Server, value uint16) error {
 	w := []byte{MbFcWriteSingleRegister, byte(adr >> 8), byte(adr), byte(value >> 8), byte(value)}
 	td := TsbData{Ch: []byte{byte(jack)}, Typ: []byte{TypModbus}, Payload: w}
 	server.tdPutCh <- td

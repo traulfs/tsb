@@ -41,11 +41,11 @@ const (
 // UART represents a connection to UART-device.
 type UART struct {
 	Jack   byte
-	Server Server
+	Server *Server
 }
 
 // NewUart opens a connection.
-func NewUart(jack byte, server Server) (*UART, error) {
+func NewUart(jack byte, server *Server) (*UART, error) {
 	CheckJack(jack)
 	err := ModbusWriteSingleRegister(ModeRegisterAdr, jack, server, RegModeValueUart)
 	if err != nil {

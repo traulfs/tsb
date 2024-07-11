@@ -30,11 +30,11 @@ const (
 // I2C represents a connection to I2C-device.
 type Port struct {
 	Jack   byte
-	Server Server
+	Server *Server
 }
 
 // NewI2C opens a connection for I2C-device.
-func NewPort(jack byte, server Server) (*Port, error) {
+func NewPort(jack byte, server *Server) (*Port, error) {
 	CheckJack(jack)
 	port := &Port{Server: server, Jack: jack}
 	/*

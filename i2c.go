@@ -9,11 +9,11 @@ import (
 type I2C struct {
 	Adr    uint8
 	Jack   byte
-	Server Server
+	Server *Server
 }
 
 // NewI2C opens a connection for I2C-device.
-func NewI2c(adr uint8, jack byte, server Server) (*I2C, error) {
+func NewI2c(adr uint8, jack byte, server *Server) (*I2C, error) {
 	CheckJack(jack)
 	i2c := &I2C{Server: server, Adr: adr, Jack: jack}
 	err := ModbusWriteSingleRegister(ModeRegisterAdr, jack, server, RegModeValueI2c)
