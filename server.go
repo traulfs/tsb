@@ -28,16 +28,15 @@ type jack struct {
 }
 
 type Server struct {
-	Adr       string
-	Typ       string
-	callback  [MaxJacks + 1]map[byte]func(data []byte)
-	callback2 func(data []byte)
-	Jack      [MaxJacks + 1]jack
-	conn      net.Conn
-	sport     *serial.Port
-	tdPutCh   chan TsbData
-	tdGetCh   chan TsbData
-	done      chan struct{}
+	Adr      string
+	Typ      string
+	callback [MaxJacks + 1]map[byte]func(data []byte)
+	Jack     [MaxJacks + 1]jack
+	conn     net.Conn
+	sport    *serial.Port
+	tdPutCh  chan TsbData
+	tdGetCh  chan TsbData
+	done     chan struct{}
 }
 
 func NewSerialServer(adr string) (Server, error) {
@@ -79,9 +78,7 @@ func (s Server) SetCallback(jack byte, typ byte, f func(payload []byte)) {
 		s.callback[jack] = make(map[byte]func(data []byte))
 	}
 	s.callback[jack][typ] = f
-	s.callback2 = f
 	s.callback[jack][typ]([]byte{0x65, 0x65, 0x65, 0x65, 0x65, 0x65})
-	s.callback2([]byte{0x61, 0x61, 0x61, 0x61, 0x61, 0x61})
 	fmt.Printf("Callback set for Jack: %d, Typ: %d\n", jack, typ)
 }
 
@@ -121,7 +118,6 @@ func (s Server) serv() {
 						s.callback[td.Ch[0]][td.Typ[0]](td.Payload)
 					} else {
 						fmt.Printf("No callback for Jack: %d, Typ: %d callback: %v\n", td.Ch[0], td.Typ[0], s.callback[td.Ch[0]])
-						s.callback2(td.Payload)
 					}
 					for i := range td.Payload {
 						s.Jack[td.Ch[0]].ReadChan[td.Typ[0]] <- td.Payload[i]
