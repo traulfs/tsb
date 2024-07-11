@@ -78,8 +78,6 @@ func (s *Server) SetCallback(jack byte, typ byte, f func(payload []byte)) {
 		s.callback[jack] = make(map[byte]func(data []byte))
 	}
 	s.callback[jack][typ] = f
-	//s.callback[jack][typ]([]byte{0x65, 0x65, 0x65, 0x65, 0x65, 0x65})
-	fmt.Printf("Callback set for Jack: %d, Typ: %d\n", jack, typ)
 }
 
 func (s *Server) serv() {
@@ -96,7 +94,7 @@ func (s *Server) serv() {
 			select {
 			case td := <-s.tdGetCh:
 				{
-					fmt.Printf("td: ch: %d, typ: %s, %x\n", td.Ch[0], TypLabel[td.Typ[0]], td.Payload)
+					//fmt.Printf("td: ch: %d, typ: %s, %x\n", td.Ch[0], TypLabel[td.Typ[0]], td.Payload)
 					if td.Typ[0] > MaxTyp {
 						//log.Printf("Invalid Typ %d!\n\r", td.Typ[0])
 						break
@@ -114,10 +112,7 @@ func (s *Server) serv() {
 							cap(s.Jack[td.Ch[0]].ReadChan[td.Typ[0]]), len(s.Jack[td.Ch[0]].ReadChan[td.Typ[0]]))
 					}
 					if s.callback[td.Ch[0]][td.Typ[0]] != nil {
-						fmt.Printf("Callback called for Jack: %d, Typ: %d\n", td.Ch[0], td.Typ[0])
 						s.callback[td.Ch[0]][td.Typ[0]](td.Payload)
-					} else {
-						fmt.Printf("No callback for Jack: %d, Typ: %d callback: %v\n", td.Ch[0], td.Typ[0], s.callback[td.Ch[0]])
 					}
 					for i := range td.Payload {
 						s.Jack[td.Ch[0]].ReadChan[td.Typ[0]] <- td.Payload[i]
