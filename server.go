@@ -30,7 +30,7 @@ type jack struct {
 type Server struct {
 	Adr      string
 	Typ      string
-	callback [MaxJacks + 1]map[byte]func(data []byte)
+	callback [MaxJacks + 1]map[byte]func(*TsbData)
 	Jack     [MaxJacks + 1]jack
 	conn     net.Conn
 	sport    *serial.Port
@@ -72,10 +72,10 @@ func (s *Server) Close() {
 	close(s.done)
 }
 
-func (s *Server) SetCallback(jack byte, typ byte, f func(payload []byte)) {
+func (s *Server) SetCallback(jack byte, typ byte, f func(*TsbData)) {
 	CheckJack(jack)
 	if s.callback[jack] == nil {
-		s.callback[jack] = make(map[byte]func(data []byte))
+		s.callback[jack] = make(map[byte]func(*TsbData))
 	}
 	s.callback[jack][typ] = f
 }
@@ -112,7 +112,7 @@ func (s *Server) serv() {
 							cap(s.Jack[td.Ch[0]].ReadChan[td.Typ[0]]), len(s.Jack[td.Ch[0]].ReadChan[td.Typ[0]]))
 					}
 					if s.callback[td.Ch[0]][td.Typ[0]] != nil {
-						s.callback[td.Ch[0]][td.Typ[0]](td.Payload)
+						s.callback[td.Ch[0]][td.Typ[0]](&td)
 					}
 					for i := range td.Payload {
 						s.Jack[td.Ch[0]].ReadChan[td.Typ[0]] <- td.Payload[i]
