@@ -38,6 +38,8 @@ const (
 	UartData5
 )
 
+const UartRS485 uint16 = iota << 15
+
 // UART represents a connection to UART-device.
 type UART struct {
 	Jack   byte
@@ -56,8 +58,8 @@ func NewUart(jack byte, server *Server) (*UART, error) {
 }
 
 // Config ?
-func (u *UART) Config(baud uint16, databits uint16, parity uint16, stopbits uint16) error {
-	err := ModbusWriteSingleRegister(UartRegisterAdr, u.Jack, u.Server, baud|databits|parity|stopbits)
+func (u *UART) Config(rs485 uint16, baud uint16, databits uint16, parity uint16, stopbits uint16) error {
+	err := ModbusWriteSingleRegister(UartRegisterAdr, u.Jack, u.Server, rs485|baud|databits|parity|stopbits)
 	if err != nil {
 		return err
 	}
