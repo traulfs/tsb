@@ -39,11 +39,11 @@ type Server struct {
 	done     chan struct{}
 }
 
-func NewSerialServer(adr string) (*Server, error) {
+func NewSerialServer(adr string, baud int) (*Server, error) {
 	var err error
 	s := Server{Adr: adr}
 	s.Typ = "Serial"
-	s.sport, err = serial.OpenPort(&serial.Config{Name: adr, Baud: 115200})
+	s.sport, err = serial.OpenPort(&serial.Config{Name: adr, Baud: baud})
 	if err != nil {
 		log.Fatal(err)
 	}
